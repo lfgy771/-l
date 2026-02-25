@@ -1,0 +1,1602 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>祖先业力探测 | 专业能量版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #1a0f1a 0%, #2d1b2d 50%, #1f2b3a 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 能量粒子背景 */
+        .energy-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 215, 0, 0.15);
+            border-radius: 50%;
+            filter: blur(3px);
+            animation: float 20s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            25% { transform: translateY(-20px) translateX(10px); }
+            50% { transform: translateY(10px) translateX(-15px); }
+            75% { transform: translateY(-10px) translateX(20px); }
+        }
+
+        /* 祖先能量圈 */
+        .ancestral-circle {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80vmin;
+            height: 80vmin;
+            border: 2px solid rgba(212, 175, 55, 0.1);
+            border-radius: 50%;
+            animation: circleRotate 60s linear infinite;
+            z-index: 0;
+        }
+
+        .ancestral-circle::before,
+        .ancestral-circle::after {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            right: -20px;
+            bottom: -20px;
+            border: 2px solid rgba(212, 175, 55, 0.05);
+            border-radius: 50%;
+            animation: circlePulse 8s infinite;
+        }
+
+        @keyframes circleRotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        @keyframes circlePulse {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.1); }
+        }
+
+        /* 页面容器 */
+        .page {
+            position: relative;
+            z-index: 10;
+            max-width: 800px;
+            width: 100%;
+            background: rgba(20, 10, 20, 0.85);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            border-radius: 48px;
+            padding: 45px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+            transition: opacity 0.5s ease;
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+            animation: pageAppear 0.5s ease-out;
+        }
+
+        @keyframes pageAppear {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 开始页样式 */
+        .pre-title {
+            color: #d4af37;
+            font-size: 14px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            font-weight: 300;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+
+        h1 {
+            color: #fff;
+            font-size: 42px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            line-height: 1.2;
+            text-align: center;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+
+        .title-underline {
+            width: 80px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #d4af37, transparent);
+            margin: 0 auto 30px;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 18px;
+            margin: 20px 0 30px;
+            line-height: 1.6;
+            font-weight: 300;
+            text-align: center;
+        }
+
+        .dimension-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin: 40px 0;
+        }
+
+        .dimension-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 20px;
+            padding: 15px 8px;
+            text-align: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .dimension-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(212, 175, 55, 0.5);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3), 0 0 20px rgba(212, 175, 55, 0.2);
+        }
+
+        .dimension-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+            filter: drop-shadow(0 0 8px #d4af37);
+        }
+
+        .dimension-card h3 {
+            color: #d4af37;
+            font-size: 14px;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .dimension-card p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 10px;
+            line-height: 1.3;
+        }
+
+        .info-bar {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 100px;
+            padding: 15px 25px;
+            margin: 30px 0;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+
+        .info-icon {
+            margin-right: 8px;
+            font-size: 18px;
+        }
+
+        .primary-btn {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
+            border: none;
+            border-radius: 100px;
+            color: #1a0f1a;
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3), 0 0 30px rgba(212, 175, 55, 0.3);
+        }
+
+        .primary-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 0 40px rgba(212, 175, 55, 0.5);
+        }
+
+        .privacy-note {
+            text-align: center;
+            margin-top: 30px;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 12px;
+        }
+
+        /* 答题页样式 */
+        .progress-section {
+            margin-bottom: 40px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+
+        .question-counter {
+            background: rgba(212, 175, 55, 0.1);
+            padding: 8px 16px;
+            border-radius: 100px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: #d4af37;
+        }
+
+        .energy-bar-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 100px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+        }
+
+        .energy-bar-fill {
+            height: 100%;
+            width: 5%;
+            background: linear-gradient(90deg, #d4af37, #f9e076, #d4af37);
+            border-radius: 100px;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 20px #d4af37;
+        }
+
+        .energy-percentage {
+            text-align: right;
+            margin-top: 8px;
+            color: #d4af37;
+            font-size: 14px;
+        }
+
+        .dimension-tag {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(212, 175, 55, 0.15);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 100px;
+            color: #d4af37;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .question-text {
+            color: white;
+            font-size: 24px;
+            line-height: 1.5;
+            margin-bottom: 40px;
+            font-weight: 400;
+        }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .option-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid rgba(212, 175, 55, 0.15);
+            border-radius: 100px;
+            padding: 18px 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .option-item:hover {
+            background: rgba(212, 175, 55, 0.1);
+            border-color: rgba(212, 175, 55, 0.5);
+            transform: translateX(10px);
+        }
+
+        .option-item.selected {
+            background: rgba(212, 175, 55, 0.2);
+            border-color: #d4af37;
+            color: #fff;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+        }
+
+        .option-marker {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            margin-right: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .option-item.selected .option-marker {
+            background: #d4af37;
+            box-shadow: 0 0 20px #d4af37;
+            border-color: #d4af37;
+        }
+
+        .energy-note {
+            margin-left: auto;
+            font-size: 12px;
+            color: rgba(212, 175, 55, 0.5);
+            font-style: italic;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+        }
+
+        .nav-btn {
+            padding: 16px 32px;
+            border: none;
+            border-radius: 100px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .nav-btn:not(:disabled):hover {
+            background: rgba(212, 175, 55, 0.15);
+            color: #fff;
+            border-color: #d4af37;
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .next-btn {
+            background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
+            color: #1a0f1a;
+            border: none;
+            font-weight: 600;
+            min-width: 140px;
+        }
+
+        .energy-tip {
+            text-align: center;
+            margin-top: 20px;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 12px;
+        }
+
+        /* 结果页样式 - 增强版 */
+        .result-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .result-badge {
+            display: inline-block;
+            padding: 8px 24px;
+            background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
+            border-radius: 100px;
+            color: #1a0f1a;
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
+        }
+
+        .total-score {
+            font-size: 64px;
+            font-weight: 700;
+            color: #d4af37;
+            text-shadow: 0 0 30px #d4af37;
+            line-height: 1;
+            margin: 20px 0 10px;
+        }
+
+        .karma-type {
+            font-size: 28px;
+            color: white;
+            background: rgba(212, 175, 55, 0.15);
+            display: inline-block;
+            padding: 8px 32px;
+            border-radius: 100px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            margin-bottom: 10px;
+        }
+
+        .energy-level-desc {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .radar-container {
+            position: relative;
+            width: 350px;
+            height: 350px;
+            margin: 30px auto;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .dimension-breakdown {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin: 40px 0;
+        }
+
+        .dimension-result-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 20px;
+            padding: 15px 8px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .dimension-result-card:hover {
+            transform: translateY(-5px);
+            border-color: #d4af37;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+        }
+
+        .dimension-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+            filter: drop-shadow(0 0 10px #d4af37);
+        }
+
+        .dimension-name {
+            color: #d4af37;
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+
+        .dimension-score {
+            font-size: 20px;
+            color: white;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .dimension-level {
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 100px;
+            display: inline-block;
+        }
+
+        .level-verylow { background: rgba(76, 175, 80, 0.2); color: #4caf80; }
+        .level-low { background: rgba(139, 195, 74, 0.2); color: #8bc34a; }
+        .level-medium { background: rgba(255, 193, 7, 0.2); color: #ffc107; }
+        .level-high { background: rgba(255, 152, 0, 0.2); color: #ff9800; }
+        .level-veryhigh { background: rgba(244, 67, 54, 0.2); color: #f44336; }
+
+        /* 能量分析区块 */
+        .energy-analysis-section {
+            background: rgba(212, 175, 55, 0.05);
+            border-radius: 32px;
+            padding: 30px;
+            margin: 30px 0;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+        }
+
+        .section-title {
+            color: #d4af37;
+            font-size: 22px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            padding-bottom: 15px;
+        }
+
+        .chakra-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin: 25px 0;
+        }
+
+        .chakra-item {
+            text-align: center;
+        }
+
+        .chakra-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin: 0 auto 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 0 20px currentColor;
+        }
+
+        .chakra-name {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 10px;
+        }
+
+        .energy-field-desc {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin: 25px 0;
+        }
+
+        .field-item {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            padding: 20px;
+        }
+
+        .field-item h4 {
+            color: #d4af37;
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+
+        .field-item p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .influence-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .influence-list li {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .influence-list li:last-child {
+            border-bottom: none;
+        }
+
+        .influence-icon {
+            font-size: 20px;
+            min-width: 30px;
+        }
+
+        .blockage-item {
+            background: rgba(244, 67, 54, 0.1);
+            border-left: 3px solid #f44336;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 0 10px 10px 0;
+        }
+
+        /* 微信按钮 */
+        .wechat-btn {
+            width: 100%;
+            padding: 22px;
+            background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
+            border: none;
+            border-radius: 100px;
+            color: #1a0f1a;
+            font-size: 22px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
+            margin: 30px 0 15px;
+            letter-spacing: 2px;
+        }
+
+        .wechat-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(212, 175, 55, 0.6);
+        }
+
+        .wechat-hint {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .wechat-id {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 16px;
+            border-radius: 100px;
+            display: inline-block;
+            color: #d4af37;
+            font-family: monospace;
+            font-size: 18px;
+            letter-spacing: 2px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .secondary-btn {
+            width: 100%;
+            padding: 16px;
+            background: transparent;
+            border: 2px solid rgba(212, 175, 55, 0.5);
+            border-radius: 100px;
+            color: #d4af37;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .secondary-btn:hover {
+            background: rgba(212, 175, 55, 0.1);
+            border-color: #d4af37;
+        }
+
+        @media (max-width: 700px) {
+            .page { padding: 30px 20px; }
+            h1 { font-size: 32px; }
+            .dimension-grid { grid-template-columns: repeat(5, 1fr); gap: 5px; }
+            .dimension-card { padding: 10px 5px; }
+            .dimension-card h3 { font-size: 11px; }
+            .dimension-card p { font-size: 8px; }
+            .dimension-breakdown { grid-template-columns: repeat(5, 1fr); gap: 5px; }
+            .chakra-grid { grid-template-columns: repeat(7, 1fr); }
+            .energy-field-desc { grid-template-columns: 1fr; }
+            .question-text { font-size: 20px; }
+            .option-item { padding: 15px 20px; font-size: 14px; }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .shake {
+            animation: shake 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- 背景动画 -->
+    <div class="energy-particles" id="particles"></div>
+    <div class="ancestral-circle"></div>
+
+    <!-- 开始页 -->
+    <div id="page-start" class="page active">
+        <div class="pre-title">ANCESTRAL KARMA · 专业能量版</div>
+        <h1>祖先业力深度探测</h1>
+        <div class="title-underline"></div>
+        <div class="subtitle">二十五道选择题 · 五大能量维度<br>测出家族能量对你的深层影响</div>
+
+        <!-- 五大维度预览 -->
+        <div class="dimension-grid">
+            <div class="dimension-card">
+                <div class="dimension-icon">🔗</div>
+                <h3>情感继承</h3>
+                <p>家族情绪模式的承接</p>
+            </div>
+            <div class="dimension-card">
+                <div class="dimension-icon">🌀</div>
+                <h3>未竟事件</h3>
+                <p>未被处理的家族创伤</p>
+            </div>
+            <div class="dimension-card">
+                <div class="dimension-icon">⚖️</div>
+                <h3>忠诚代价</h3>
+                <p>为归属付出的自我压抑</p>
+            </div>
+            <div class="dimension-card">
+                <div class="dimension-icon">🔒</div>
+                <h3>家族秘密</h3>
+                <p>被隐藏的能量印记</p>
+            </div>
+            <div class="dimension-card">
+                <div class="dimension-icon">⚡</div>
+                <h3>脉轮印记</h3>
+                <p>能量中心的家族堵塞</p>
+            </div>
+        </div>
+
+        <div class="info-bar">
+            <div class="info-item"><span class="info-icon">⏱️</span>12分钟</div>
+            <div class="info-item"><span class="info-icon">📋</span>25题</div>
+            <div class="info-item"><span class="info-icon">🔒</span>匿名</div>
+            <div class="info-item"><span class="info-icon">✨</span>5维能量</div>
+        </div>
+
+        <button class="primary-btn" onclick="showPage('test')">开始探测祖先能量</button>
+        <div class="privacy-note">⚡ 结果仅你可见 · 专业能量分析 · 加密存储</div>
+    </div>
+
+    <!-- 答题页 -->
+    <div id="page-test" class="page">
+        <div class="progress-section">
+            <div class="progress-header">
+                <span class="question-counter" id="questionCounter">第 1 / 25 题</span>
+                <span id="dimensionDisplay" style="color: #d4af37;">情感继承</span>
+            </div>
+            <div class="energy-bar-container">
+                <div class="energy-bar-fill" id="progressBar" style="width: 4%;"></div>
+            </div>
+            <div class="energy-percentage" id="energyPercentage">能量释放 4%</div>
+        </div>
+
+        <div class="question-section">
+            <div class="dimension-tag" id="dimensionTag">🔗 情感继承</div>
+            <div class="question-text" id="questionText">加载中...</div>
+
+            <div class="options-grid" id="optionsContainer"></div>
+
+            <div class="nav-buttons">
+                <button class="nav-btn" id="prevBtn" onclick="prevQuestion()" disabled>← 上一题</button>
+                <button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()">下一题 →</button>
+            </div>
+
+            <div class="energy-tip">⚡ 跟随直觉选择，感受能量的流动</div>
+        </div>
+    </div>
+
+    <!-- 结果页 - 增强版 -->
+    <div id="page-result" class="page">
+        <div class="result-header">
+            <div class="result-badge">祖先能量解码完成</div>
+            <h1>你的家族能量图谱</h1>
+            <div class="total-score" id="totalScore">0</div>
+            <div class="karma-type" id="karmaType">自由之子 · 轻盈型</div>
+            <div class="energy-level-desc" id="energyLevelDesc">祖先祝福大于业力负担，你主要承接的是家族的能量馈赠</div>
+        </div>
+
+        <!-- 五维雷达图 -->
+        <div class="radar-container">
+            <canvas id="radarChart" width="350" height="350"></canvas>
+        </div>
+
+        <!-- 五维得分卡片 -->
+        <div class="dimension-breakdown" id="dimensionCards"></div>
+
+        <!-- 能量深度分析 -->
+        <div class="energy-analysis-section">
+            <div class="section-title">
+                <span>🔮 能量场深度分析</span>
+            </div>
+            
+            <!-- 脉轮状态 -->
+            <h3 style="color: #d4af37; margin-bottom: 15px;">⊙ 脉轮能量印记</h3>
+            <div class="chakra-grid" id="chakraGrid"></div>
+            
+            <!-- 能量场状态 -->
+            <div class="energy-field-desc">
+                <div class="field-item">
+                    <h4>🌌 个人能量场状态</h4>
+                    <p id="energyFieldState">你的能量场整体明亮清晰，中心稳定，有少量家族能量印记，但不影响主要能量流动。</p>
+                </div>
+                <div class="field-item">
+                    <h4>👥 家族能量纠缠点</h4>
+                    <p id="energyEntanglement">主要纠缠在第三代父系家族的情绪模式上，需要意识层面的觉察与分离。</p>
+                </div>
+            </div>
+            
+            <!-- 具体影响 -->
+            <h3 style="color: #d4af37; margin: 25px 0 15px;">📋 家族能量对你的具体影响</h3>
+            <ul class="influence-list" id="influenceList"></ul>
+            
+            <!-- 能量堵塞点 -->
+            <h3 style="color: #d4af37; margin: 25px 0 15px;">⚠️ 需要留意的能量堵塞</h3>
+            <div id="blockagePoints"></div>
+        </div>
+
+        <!-- 付费解读按钮 -->
+        <button class="wechat-btn" onclick="copyWechat()">💰 付费998元 添加微信获取1对1深度解读</button>
+        <div class="wechat-hint">
+            <span>复制微信号：</span>
+            <span class="wechat-id" id="wechatId">lfhy771</span>
+            <span style="margin-left: 10px; cursor: pointer;" onclick="copyWechat()">📋 复制</span>
+        </div>
+        
+        <button class="secondary-btn" onclick="restartTest()">重新测试</button>
+        <div class="privacy-note">⚡ 专业能量分析 · 一对一深度解读 · 匿名咨询</div>
+    </div>
+
+    <script>
+        // ==================== 全局变量 ====================
+        let currentPage = 'start';
+        let currentQuestionIndex = 0;
+        let answers = {};
+
+        // 题目数据 - 25题，5个维度各5题
+        const questions = [
+            // 维度1: 情感继承 (1-5)
+            { id: 1, dimension: "emotion", dimensionName: "情感继承", icon: "🔗", text: "你是否经常感受到莫名的情绪（悲伤、愤怒、恐惧）却不知来源？", options: [
+                { value: 1, label: "从不", energyNote: "情绪自主" },
+                { value: 2, label: "很少", energyNote: "轻微承接" },
+                { value: 3, label: "有时", energyNote: "偶尔承接" },
+                { value: 4, label: "经常", energyNote: "明显承接" },
+                { value: 5, label: "总是", energyNote: "深度承接" }
+            ]},
+            { id: 2, dimension: "emotion", dimensionName: "情感继承", icon: "🔗", text: "你的情绪模式是否和某位家族成员（父母/祖父母）惊人地相似？", options: [
+                { value: 1, label: "完全不同", energyNote: "自我模式" },
+                { value: 2, label: "稍有相似", energyNote: "轻微影响" },
+                { value: 3, label: "有些相似", energyNote: "部分继承" },
+                { value: 4, label: "非常相似", energyNote: "明显继承" },
+                { value: 5, label: "几乎一样", energyNote: "完全复制" }
+            ]},
+            { id: 3, dimension: "emotion", dimensionName: "情感继承", icon: "🔗", text: "在家族聚会后，你是否常感到情绪低落或能量被抽空？", options: [
+                { value: 1, label: "从不", energyNote: "能量独立" },
+                { value: 2, label: "很少", energyNote: "偶尔消耗" },
+                { value: 3, label: "有时", energyNote: "明显消耗" },
+                { value: 4, label: "经常", energyNote: "严重消耗" },
+                { value: 5, label: "总是", energyNote: "能量黑洞" }
+            ]},
+            { id: 4, dimension: "emotion", dimensionName: "情感继承", icon: "🔗", text: "你是否承担着让家族“开心”、“和谐”的责任感？", options: [
+                { value: 1, label: "从不", energyNote: "情绪自由" },
+                { value: 2, label: "很少", energyNote: "轻微负责" },
+                { value: 3, label: "有时", energyNote: "明显负责" },
+                { value: 4, label: "经常", energyNote: "过度负责" },
+                { value: 5, label: "总是", energyNote: "情绪承担者" }
+            ]},
+            { id: 5, dimension: "emotion", dimensionName: "情感继承", icon: "🔗", text: "家族中是否有压抑情绪、不允许表达情感的传统？", options: [
+                { value: 1, label: "完全没有", energyNote: "情感开放" },
+                { value: 2, label: "不太明显", energyNote: "轻微压抑" },
+                { value: 3, label: "有些压抑", energyNote: "部分压抑" },
+                { value: 4, label: "比较明显", energyNote: "明显压抑" },
+                { value: 5, label: "非常严重", energyNote: "情感冻结" }
+            ]},
+            
+            // 维度2: 未竟事件 (6-10)
+            { id: 6, dimension: "unfinished", dimensionName: "未竟事件", icon: "🌀", text: "家族中是否有重大创伤未被谈论（战争、饥荒、意外、流产）？", options: [
+                { value: 1, label: "没有", energyNote: "历史平静" },
+                { value: 2, label: "不太清楚", energyNote: "潜在遗忘" },
+                { value: 3, label: "听说过", energyNote: "隐约存在" },
+                { value: 4, label: "有，很少提", energyNote: "未竟能量" },
+                { value: 5, label: "有，影响大", energyNote: "沉重创伤" }
+            ]},
+            { id: 7, dimension: "unfinished", dimensionName: "未竟事件", icon: "🌀", text: "你是否对某些历史时期有莫名的恐惧或情绪反应？", options: [
+                { value: 1, label: "完全没有", energyNote: "当下生活" },
+                { value: 2, label: "不太有", energyNote: "轻微连接" },
+                { value: 3, label: "有一点", energyNote: "能量印记" },
+                { value: 4, label: "比较强烈", energyNote: "明显承接" },
+                { value: 5, label: "非常强烈", energyNote: "创伤重现" }
+            ]},
+            { id: 8, dimension: "unfinished", dimensionName: "未竟事件", icon: "🌀", text: "你的梦境中是否出现过不认识但感觉亲切的“家人”？", options: [
+                { value: 1, label: "从不", energyNote: "梦境清净" },
+                { value: 2, label: "很少", energyNote: "偶尔连接" },
+                { value: 3, label: "有时", energyNote: "能量显现" },
+                { value: 4, label: "经常", energyNote: "频繁连接" },
+                { value: 5, label: "反复出现", energyNote: "深层纠缠" }
+            ]},
+            { id: 9, dimension: "unfinished", dimensionName: "未竟事件", icon: "🌀", text: "家族中是否有被排除、遗忘、不允许提起的人？", options: [
+                { value: 1, label: "没有", energyNote: "家族完整" },
+                { value: 2, label: "不太清楚", energyNote: "潜在遗忘" },
+                { value: 3, label: "听说过", energyNote: "隐约存在" },
+                { value: 4, label: "知道但不谈", energyNote: "明显禁忌" },
+                { value: 5, label: "有，且是秘密", energyNote: "沉重阴影" }
+            ]},
+            { id: 10, dimension: "unfinished", dimensionName: "未竟事件", icon: "🌀", text: "你是否对某些地方有说不清的归属感或排斥感？", options: [
+                { value: 1, label: "没有感觉", energyNote: "能量中性" },
+                { value: 2, label: "很淡", energyNote: "微弱连接" },
+                { value: 3, label: "有点感觉", energyNote: "情感印记" },
+                { value: 4, label: "比较强", energyNote: "能量牵引" },
+                { value: 5, label: "非常强烈", energyNote: "根源纠缠" }
+            ]},
+            
+            // 维度3: 忠诚代价 (11-15)
+            { id: 11, dimension: "loyalty", dimensionName: "忠诚代价", icon: "⚖️", text: "你是否觉得活出自己会让家人失望或背叛家族？", options: [
+                { value: 1, label: "完全不觉得", energyNote: "自我完整" },
+                { value: 2, label: "不太觉得", energyNote: "轻微顾虑" },
+                { value: 3, label: "有点觉得", energyNote: "内心冲突" },
+                { value: 4, label: "比较觉得", energyNote: "明显压抑" },
+                { value: 5, label: "非常觉得", energyNote: "自我牺牲" }
+            ]},
+            { id: 12, dimension: "loyalty", dimensionName: "忠诚代价", icon: "⚖️", text: "你是否在重复某个家族成员的命运（婚姻/事业/健康）？", options: [
+                { value: 1, label: "完全不同", energyNote: "自主人生" },
+                { value: 2, label: "稍有相似", energyNote: "偶然巧合" },
+                { value: 3, label: "有些相似", energyNote: "模式重复" },
+                { value: 4, label: "非常相似", energyNote: "明显复制" },
+                { value: 5, label: "几乎一样", energyNote: "命运重演" }
+            ]},
+            { id: 13, dimension: "loyalty", dimensionName: "忠诚代价", icon: "⚖️", text: "你是否有“不能比父母过得更好”的内疚感？", options: [
+                { value: 1, label: "从来没有", energyNote: "能量自由" },
+                { value: 2, label: "很少", energyNote: "轻微觉察" },
+                { value: 3, label: "有时", energyNote: "需要留意" },
+                { value: 4, label: "经常", energyNote: "明显负担" },
+                { value: 5, label: "总是如此", energyNote: "深度忠诚" }
+            ]},
+            { id: 14, dimension: "loyalty", dimensionName: "忠诚代价", icon: "⚖️", text: "你是否承担着让家族“完整”、“修复”的使命？", options: [
+                { value: 1, label: "没有", energyNote: "自我生活" },
+                { value: 2, label: "轻微感觉", energyNote: "隐约使命" },
+                { value: 3, label: "有些感觉", energyNote: "部分承担" },
+                { value: 4, label: "明显感觉", energyNote: "过度承担" },
+                { value: 5, label: "这是我的人生", energyNote: "完全背负" }
+            ]},
+            { id: 15, dimension: "loyalty", dimensionName: "忠诚代价", icon: "⚖️", text: "你的成功是否常伴随莫名的破坏或失去？", options: [
+                { value: 1, label: "从不", energyNote: "配得成功" },
+                { value: 2, label: "很少", energyNote: "偶尔破坏" },
+                { value: 3, label: "有时", energyNote: "明显模式" },
+                { value: 4, label: "经常", energyNote: "强烈模式" },
+                { value: 5, label: "总是如此", energyNote: "成功禁忌" }
+            ]},
+            
+            // 维度4: 家族秘密 (16-20) - 改为🔒图标
+            { id: 16, dimension: "secret", dimensionName: "家族秘密", icon: "🔒", text: "你是否能感觉到家族中有未被言说的秘密？", options: [
+                { value: 1, label: "完全没有", energyNote: "能量清明" },
+                { value: 2, label: "不太有", energyNote: "偶尔感知" },
+                { value: 3, label: "有点感觉", energyNote: "隐约存在" },
+                { value: 4, label: "比较清楚", energyNote: "明显感知" },
+                { value: 5, label: "非常清楚", energyNote: "深度连接" }
+            ]},
+            { id: 17, dimension: "secret", dimensionName: "家族秘密", icon: "🔒", text: "家中是否有些话题是绝对不能提起的？", options: [
+                { value: 1, label: "没有", energyNote: "开放交流" },
+                { value: 2, label: "很少", energyNote: "少量禁忌" },
+                { value: 3, label: "有些话题", energyNote: "部分封闭" },
+                { value: 4, label: "很多话题", energyNote: "明显封闭" },
+                { value: 5, label: "几乎所有", energyNote: "完全封闭" }
+            ]},
+            { id: 18, dimension: "secret", dimensionName: "家族秘密", icon: "🔒", text: "你是否对家族历史有强烈的探知欲，但又感到恐惧？", options: [
+                { value: 1, label: "从不", energyNote: "平静面对" },
+                { value: 2, label: "很少", energyNote: "轻微好奇" },
+                { value: 3, label: "有时", energyNote: "明显好奇" },
+                { value: 4, label: "经常", energyNote: "强烈探知" },
+                { value: 5, label: "总是", energyNote: "执念探知" }
+            ]},
+            { id: 19, dimension: "secret", dimensionName: "家族秘密", icon: "🔒", text: "你是否感觉某些家族秘密在梦中或直觉中向你显现？", options: [
+                { value: 1, label: "从不", energyNote: "无觉知" },
+                { value: 2, label: "很少", energyNote: "偶尔显现" },
+                { value: 3, label: "有时", energyNote: "部分显现" },
+                { value: 4, label: "经常", energyNote: "频繁显现" },
+                { value: 5, label: "总是", energyNote: "持续显现" }
+            ]},
+            { id: 20, dimension: "secret", dimensionName: "家族秘密", icon: "🔒", text: "家族中是否有突然消失、断绝关系的成员？", options: [
+                { value: 1, label: "没有", energyNote: "家族完整" },
+                { value: 2, label: "不太清楚", energyNote: "潜在遗忘" },
+                { value: 3, label: "听说过", energyNote: "隐约存在" },
+                { value: 4, label: "有，原因不明", energyNote: "未解之谜" },
+                { value: 5, label: "有，影响至今", energyNote: "能量断裂" }
+            ]},
+            
+            // 维度5: 脉轮印记 (21-25)
+            { id: 21, dimension: "chakra", dimensionName: "脉轮印记", icon: "⚡", text: "你是否常感到莫名的恐惧、不安（对应根轮）？", options: [
+                { value: 1, label: "从不", energyNote: "根轮稳定" },
+                { value: 2, label: "很少", energyNote: "轻微堵塞" },
+                { value: 3, label: "有时", energyNote: "明显堵塞" },
+                { value: 4, label: "经常", energyNote: "严重堵塞" },
+                { value: 5, label: "总是", energyNote: "根轮冻结" }
+            ]},
+            { id: 22, dimension: "chakra", dimensionName: "脉轮印记", icon: "⚡", text: "你是否常感到情感压抑、难以建立亲密关系（对应心轮）？", options: [
+                { value: 1, label: "从不", energyNote: "心轮开放" },
+                { value: 2, label: "很少", energyNote: "轻微封闭" },
+                { value: 3, label: "有时", energyNote: "明显封闭" },
+                { value: 4, label: "经常", energyNote: "严重封闭" },
+                { value: 5, label: "总是", energyNote: "心轮冻结" }
+            ]},
+            { id: 23, dimension: "chakra", dimensionName: "脉轮印记", icon: "⚡", text: "你是否难以表达真实的自己，总感觉被压制（对应喉轮）？", options: [
+                { value: 1, label: "从不", energyNote: "喉轮畅通" },
+                { value: 2, label: "很少", energyNote: "轻微压制" },
+                { value: 3, label: "有时", energyNote: "明显压制" },
+                { value: 4, label: "经常", energyNote: "严重压制" },
+                { value: 5, label: "总是", energyNote: "喉轮冻结" }
+            ]},
+            { id: 24, dimension: "chakra", dimensionName: "脉轮印记", icon: "⚡", text: "你是否常感到无力、没有方向（对应太阳神经丛）？", options: [
+                { value: 1, label: "从不", energyNote: "本我强大" },
+                { value: 2, label: "很少", energyNote: "轻微无力" },
+                { value: 3, label: "有时", energyNote: "明显无力" },
+                { value: 4, label: "经常", energyNote: "严重无力" },
+                { value: 5, label: "总是", energyNote: "本我冻结" }
+            ]},
+            { id: 25, dimension: "chakra", dimensionName: "脉轮印记", icon: "⚡", text: "你是否感到与家族根源的连接感异常强烈或异常断裂？", options: [
+                { value: 1, label: "适中连接", energyNote: "平衡" },
+                { value: 2, label: "稍弱连接", energyNote: "轻微断裂" },
+                { value: 3, label: "非常强烈", energyNote: "过度连接" },
+                { value: 4, label: "非常断裂", energyNote: "严重断裂" },
+                { value: 5, label: "完全纠缠", energyNote: "无法分离" }
+            ]}
+        ];
+
+        // ==================== 页面切换 ====================
+        window.showPage = function(pageName) {
+            // 隐藏所有页面
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // 显示目标页面
+            const targetPage = document.getElementById('page-' + pageName);
+            if (targetPage) {
+                targetPage.classList.add('active');
+                currentPage = pageName;
+            }
+            
+            // 根据页面执行初始化
+            if (pageName === 'test') {
+                currentQuestionIndex = 0;
+                answers = {};
+                loadQuestion(0);
+                updateProgress();
+            } else if (pageName === 'result') {
+                displayResults();
+            }
+        };
+
+        // ==================== 答题页逻辑 ====================
+        function loadQuestion(index) {
+            const q = questions[index];
+            
+            document.getElementById('questionCounter').innerHTML = '第 ' + (index + 1) + ' / 25 题';
+            
+            const dimensionTag = document.getElementById('dimensionTag');
+            dimensionTag.innerHTML = q.icon + ' ' + q.dimensionName;
+            
+            document.getElementById('questionText').innerText = q.text;
+            
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            for (let i = 0; i < q.options.length; i++) {
+                const opt = q.options[i];
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option-item';
+                if (answers[q.id] === opt.value) {
+                    optionDiv.classList.add('selected');
+                }
+                
+                optionDiv.onclick = (function(qId, val) {
+                    return function() { selectOption(qId, val); };
+                })(q.id, opt.value);
+                
+                const markerDiv = document.createElement('div');
+                markerDiv.className = 'option-marker';
+                
+                const spanLabel = document.createElement('span');
+                spanLabel.innerText = opt.label;
+                
+                const spanNote = document.createElement('span');
+                spanNote.className = 'energy-note';
+                spanNote.innerText = opt.energyNote;
+                
+                optionDiv.appendChild(markerDiv);
+                optionDiv.appendChild(spanLabel);
+                optionDiv.appendChild(spanNote);
+                
+                optionsContainer.appendChild(optionDiv);
+            }
+            
+            document.getElementById('prevBtn').disabled = index === 0;
+            
+            const nextBtn = document.getElementById('nextBtn');
+            if (index === questions.length - 1) {
+                nextBtn.innerText = '查看结果 →';
+            } else {
+                nextBtn.innerText = '下一题 →';
+            }
+        }
+
+        window.selectOption = function(questionId, value) {
+            answers[questionId] = value;
+            
+            const options = document.querySelectorAll('.option-item');
+            const currentQ = questions[currentQuestionIndex];
+            for (let i = 0; i < options.length; i++) {
+                if (currentQ.options[i].value === value) {
+                    options[i].classList.add('selected');
+                } else {
+                    options[i].classList.remove('selected');
+                }
+            }
+            
+            updateProgress();
+            
+            if (currentQuestionIndex < questions.length - 1) {
+                setTimeout(function() {
+                    nextQuestion();
+                }, 400);
+            }
+        };
+
+        window.prevQuestion = function() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion(currentQuestionIndex);
+                updateProgress();
+            }
+        };
+
+        window.nextQuestion = function() {
+            if (!answers[questions[currentQuestionIndex].id]) {
+                document.querySelector('.question-section').classList.add('shake');
+                setTimeout(function() {
+                    document.querySelector('.question-section').classList.remove('shake');
+                }, 300);
+                return;
+            }
+            
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion(currentQuestionIndex);
+                updateProgress();
+            } else {
+                calculateAndSaveResults();
+                showPage('result');
+            }
+        };
+
+        function updateProgress() {
+            let answeredCount = 0;
+            for (let key in answers) {
+                if (answers.hasOwnProperty(key)) answeredCount++;
+            }
+            const progress = (answeredCount / questions.length) * 100;
+            
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('energyPercentage').innerHTML = '能量释放 ' + Math.round(progress) + '%';
+        }
+
+        function calculateAndSaveResults() {
+            if (Object.keys(answers).length < 25) return;
+            
+            // 五维度得分计算
+            let emotionSum = 0, emotionCount = 0;
+            let unfinishedSum = 0, unfinishedCount = 0;
+            let loyaltySum = 0, loyaltyCount = 0;
+            let secretSum = 0, secretCount = 0;
+            let chakraSum = 0, chakraCount = 0;
+            
+            for (let i = 0; i < questions.length; i++) {
+                const q = questions[i];
+                const score = answers[q.id];
+                if (score) {
+                    if (q.dimension === 'emotion') {
+                        emotionSum += score;
+                        emotionCount++;
+                    } else if (q.dimension === 'unfinished') {
+                        unfinishedSum += score;
+                        unfinishedCount++;
+                    } else if (q.dimension === 'loyalty') {
+                        loyaltySum += score;
+                        loyaltyCount++;
+                    } else if (q.dimension === 'secret') {
+                        secretSum += score;
+                        secretCount++;
+                    } else if (q.dimension === 'chakra') {
+                        chakraSum += score;
+                        chakraCount++;
+                    }
+                }
+            }
+            
+            // 各维度平均分 (1-5分)
+            const emotion = emotionSum / emotionCount;
+            const unfinished = unfinishedSum / unfinishedCount;
+            const loyalty = loyaltySum / loyaltyCount;
+            const secret = secretSum / secretCount;
+            const chakra = chakraSum / chakraCount;
+            
+            // 总分 = 五维平均 * 5 (范围5-25分)
+            const total = (emotion + unfinished + loyalty + secret + chakra);
+            
+            const result = {
+                emotion: emotion,
+                unfinished: unfinished,
+                loyalty: loyalty,
+                secret: secret,
+                chakra: chakra,
+                total: total,
+                answers: answers,
+                timestamp: new Date().toISOString()
+            };
+            
+            localStorage.setItem('ancestorKarmaResult', JSON.stringify(result));
+        }
+
+        // ==================== 结果页逻辑 - 增强版 ====================
+        function displayResults() {
+            const resultStr = localStorage.getItem('ancestorKarmaResult');
+            if (!resultStr) return;
+            
+            const result = JSON.parse(resultStr);
+            
+            const total = result.total;
+            document.getElementById('totalScore').innerHTML = total.toFixed(1);
+            
+            // 确定类型和描述
+            let type = '', typeDesc = '';
+            if (total <= 10) {
+                type = '自由之子 · 轻盈型';
+                typeDesc = '祖先祝福大于业力负担，你主要承接的是家族的能量馈赠';
+            } else if (total <= 15) {
+                type = '清醒行者 · 觉察型';
+                typeDesc = '部分家族模式需要觉察，某些领域有明显能量印记';
+            } else if (total <= 20) {
+                type = '忠诚背负者 · 负重型';
+                typeDesc = '你背负了较多家族能量，某些人生选择受到深层影响';
+            } else {
+                type = '能量囚徒 · 纠缠型';
+                typeDesc = '深度纠缠在家族系统中，许多情绪和选择都不是“你”的';
+            }
+            document.getElementById('karmaType').innerHTML = type;
+            document.getElementById('energyLevelDesc').innerHTML = typeDesc;
+            
+            // 生成五维卡片
+            generateDimensionCards(result);
+            
+            // 生成脉轮图
+            generateChakraGrid(result);
+            
+            // 生成能量场描述
+            generateEnergyField(result);
+            
+            // 生成影响列表
+            generateInfluenceList(result);
+            
+            // 生成堵塞点
+            generateBlockagePoints(result);
+            
+            // 绘制雷达图
+            drawRadarChart(result);
+        }
+
+        function generateDimensionCards(result) {
+            const dimensions = [
+                { key: 'emotion', name: '情感继承', icon: '🔗', score: result.emotion },
+                { key: 'unfinished', name: '未竟事件', icon: '🌀', score: result.unfinished },
+                { key: 'loyalty', name: '忠诚代价', icon: '⚖️', score: result.loyalty },
+                { key: 'secret', name: '家族秘密', icon: '🔒', score: result.secret },
+                { key: 'chakra', name: '脉轮印记', icon: '⚡', score: result.chakra }
+            ];
+            
+            let html = '';
+            for (let i = 0; i < dimensions.length; i++) {
+                const dim = dimensions[i];
+                let level = '', levelClass = '';
+                if (dim.score <= 1.5) { level = '极低'; levelClass = 'level-verylow'; }
+                else if (dim.score <= 2.5) { level = '较低'; levelClass = 'level-low'; }
+                else if (dim.score <= 3.5) { level = '中等'; levelClass = 'level-medium'; }
+                else if (dim.score <= 4.5) { level = '较高'; levelClass = 'level-high'; }
+                else { level = '极高'; levelClass = 'level-veryhigh'; }
+                
+                html += '<div class="dimension-result-card">' +
+                    '<div class="dimension-icon">' + dim.icon + '</div>' +
+                    '<div class="dimension-name">' + dim.name + '</div>' +
+                    '<div class="dimension-score">' + dim.score.toFixed(1) + '</div>' +
+                    '<div class="dimension-level ' + levelClass + '">' + level + '</div>' +
+                '</div>';
+            }
+            document.getElementById('dimensionCards').innerHTML = html;
+        }
+
+        function generateChakraGrid(result) {
+            const chakras = [
+                { name: '根轮', color: '#ff4444', emoji: '🟥' },
+                { name: '脐轮', color: '#ff8800', emoji: '🟧' },
+                { name: '太阳轮', color: '#ffcc00', emoji: '🟨' },
+                { name: '心轮', color: '#44ff44', emoji: '🟩' },
+                { name: '喉轮', color: '#4444ff', emoji: '🟦' },
+                { name: '眉心轮', color: '#8844ff', emoji: '🟪' },
+                { name: '顶轮', color: '#ff44ff', emoji: '💜' }
+            ];
+            
+            // 根据脉轮印记分数和随机因子生成不同透明度
+            let html = '';
+            for (let i = 0; i < chakras.length; i++) {
+                const chakra = chakras[i];
+                // 使用chakra分数为基础，加上一些随机变化，让每个脉轮略有不同
+                const baseScore = result.chakra;
+                // 不同脉轮受影响程度不同
+                let factor = 0.3 + (i * 0.1);
+                if (factor > 0.8) factor = 0.8;
+                const chakraScore = Math.min(1, (baseScore / 5) * (0.7 + factor));
+                
+                html += '<div class="chakra-item">' +
+                    '<div class="chakra-circle" style="background: ' + chakra.color + '; opacity: ' + chakraScore + ';">' + chakra.emoji + '</div>' +
+                    '<div class="chakra-name">' + chakra.name + '</div>' +
+                '</div>';
+            }
+            document.getElementById('chakraGrid').innerHTML = html;
+        }
+
+        function generateEnergyField(result) {
+            const total = result.total;
+            
+            // 能量场状态
+            let fieldState = '';
+            if (total <= 10) {
+                fieldState = '你的能量场整体明亮清晰，中心稳定，呈现金色光晕。家族能量以祝福的形式环绕在你周围，没有形成纠缠或堵塞。你的个人能量与家族能量有清晰的边界，既能承接祖先的智慧，又不被家族模式束缚。';
+            } else if (total <= 15) {
+                fieldState = '你的能量场整体明亮，但某些区域有淡淡的灰色印记，主要在情绪中心和关系层面。家族能量以丝状连接的方式影响着你，需要意识层面的觉察才能区分“你的”和“家族的”。';
+            } else if (total <= 20) {
+                fieldState = '你的能量场有明显暗区，尤其在根轮和心轮位置。家族能量以粗重的线条与你纠缠，形成能量牵拉。你经常感到莫名的情绪和重复的命运模式，这些是家族能量在通过你表达。';
+            } else {
+                fieldState = '你的能量场严重淤堵，边界模糊不清。你承接了大量家族未竟事件和创伤能量，这些能量在你的能量场中形成“能量结节”，影响着你生活的各个方面。你的许多情绪、选择、甚至身体感受都不是你自己的。';
+            }
+            document.getElementById('energyFieldState').innerHTML = fieldState;
+            
+            // 纠缠点
+            let entanglement = '';
+            if (result.emotion > 3.5) entanglement += '情感继承维度明显，主要纠缠在母系家族的情绪模式上。';
+            if (result.unfinished > 3.5) entanglement += '未竟事件维度明显，主要纠缠在祖辈经历的创伤事件上。';
+            if (result.loyalty > 3.5) entanglement += '忠诚代价维度明显，你通过重复家族命运来表达忠诚。';
+            if (result.secret > 3.5) entanglement += '家族秘密维度明显，你在无意识中守护着家族的秘密能量。';
+            if (result.chakra > 3.5) entanglement += '脉轮印记维度明显，你的能量中心有家族能量的堵塞印记。';
+            
+            if (entanglement === '') {
+                entanglement = '无明显家族能量纠缠，你与家族的能量连接健康而清晰。';
+            }
+            document.getElementById('energyEntanglement').innerHTML = entanglement;
+        }
+
+        function generateInfluenceList(result) {
+            let html = '';
+            
+            if (result.emotion > 3) {
+                html += '<li><span class="influence-icon">🔗</span> 情绪模式受家族影响，常感受到不属于自己的情绪波动，尤其在家族聚会后能量消耗明显。</li>';
+            }
+            if (result.unfinished > 3) {
+                html += '<li><span class="influence-icon">🌀</span> 家族未竟事件在能量层面影响着你，你可能对某些历史时期有莫名的情绪反应。</li>';
+            }
+            if (result.loyalty > 3) {
+                html += '<li><span class="influence-icon">⚖️</span> 出于对家族的忠诚，你无意识中在重复某些家族成员的命运模式。</li>';
+            }
+            if (result.secret > 3) {
+                html += '<li><span class="influence-icon">🔒</span> 家族秘密的能量在你潜意识中运作，影响着你的人际关系和人生选择。</li>';
+            }
+            if (result.chakra > 3) {
+                html += '<li><span class="influence-icon">⚡</span> 家族能量在特定脉轮形成印记，影响该脉轮对应的生命领域功能。</li>';
+            }
+            
+            // 具体影响分析
+            if (result.emotion > 4) {
+                html += '<li><span class="influence-icon">💭</span> 你可能是家族情绪的“承接者”，承担着未被表达的情感，这在能量层面形成了心轮堵塞。</li>';
+            }
+            if (result.loyalty > 4 && result.unfinished > 4) {
+                html += '<li><span class="influence-icon">🔄</span> 你正处在一个重要的家族能量循环中，某些人生重大事件（婚姻、事业转折）可能受到家族模式的牵引。</li>';
+            }
+            if (result.secret > 4) {
+                html += '<li><span class="influence-icon">🤐</span> 家族秘密的能量在你喉轮形成压制，影响你表达真实自我的能力。</li>';
+            }
+            
+            if (html === '') {
+                html = '<li><span class="influence-icon">✨</span> 家族能量对你的影响主要是祝福而非负担，你有能力活出独立自主的人生。</li>';
+            }
+            
+            document.getElementById('influenceList').innerHTML = html;
+        }
+
+        function generateBlockagePoints(result) {
+            let html = '';
+            
+            if (result.chakra > 3) {
+                if (result.emotion > 3.5) {
+                    html += '<div class="blockage-item">❤️ 心轮区域有情绪能量淤堵，表现为过度承担他人情绪、难以建立亲密关系。</div>';
+                }
+                if (result.loyalty > 3.5) {
+                    html += '<div class="blockage-item">🟡 太阳神经丛有忠诚模式堵塞，表现为自我价值感低、不敢活出真正的自己。</div>';
+                }
+                if (result.secret > 3.5) {
+                    html += '<div class="blockage-item">🔵 喉轮有秘密能量压制，表现为不敢说真话、表达受阻。</div>';
+                }
+                if (result.unfinished > 3.5) {
+                    html += '<div class="blockage-item">🔴 根轮有未竟事件印记，表现为莫名的生存恐惧、缺乏安全感。</div>';
+                }
+            }
+            
+            if (result.emotion > 4.5 && result.loyalty > 4.5) {
+                html += '<div class="blockage-item">⚠️ 情感继承与忠诚代价形成能量闭环，你可能在重复“拯救者-受害者”的家族剧本。</div>';
+            }
+            
+            if (html === '') {
+                html = '<div class="blockage-item">✅ 未检测到明显能量堵塞，家族能量流动顺畅。</div>';
+            }
+            
+            document.getElementById('blockagePoints').innerHTML = html;
+        }
+
+        function drawRadarChart(result) {
+            const canvas = document.getElementById('radarChart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            
+            ctx.clearRect(0, 0, 350, 350);
+            
+            const centerX = 175, centerY = 175, radius = 130;
+            const angles = [0, 72, 144, 216, 288].map(function(deg) { return deg * Math.PI / 180; });
+            
+            // 绘制背景网格
+            for (let level = 1; level <= 5; level++) {
+                ctx.beginPath();
+                ctx.strokeStyle = 'rgba(212, 175, 55, ' + (0.1 + level * 0.03) + ')';
+                ctx.lineWidth = 1;
+                
+                const r = (radius * level) / 5;
+                for (let i = 0; i < angles.length; i++) {
+                    const x = centerX + r * Math.cos(angles[i] - Math.PI/2);
+                    const y = centerY + r * Math.sin(angles[i] - Math.PI/2);
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.closePath();
+                ctx.stroke();
+            }
+            
+            // 绘制轴线
+            ctx.strokeStyle = 'rgba(212, 175, 55, 0.3)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < angles.length; i++) {
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                const x = centerX + radius * Math.cos(angles[i] - Math.PI/2);
+                const y = centerY + radius * Math.sin(angles[i] - Math.PI/2);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+            }
+            
+            // 绘制数据
+            const scores = [
+                result.emotion / 5 * radius,
+                result.unfinished / 5 * radius,
+                result.loyalty / 5 * radius,
+                result.secret / 5 * radius,
+                result.chakra / 5 * radius
+            ];
+            
+            ctx.beginPath();
+            ctx.fillStyle = 'rgba(212, 175, 55, 0.25)';
+            ctx.strokeStyle = '#d4af37';
+            ctx.lineWidth = 3;
+            ctx.shadowColor = '#d4af37';
+            ctx.shadowBlur = 15;
+            
+            for (let i = 0; i < angles.length; i++) {
+                const x = centerX + scores[i] * Math.cos(angles[i] - Math.PI/2);
+                const y = centerY + scores[i] * Math.sin(angles[i] - Math.PI/2);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+            
+            // 绘制数据点
+            for (let i = 0; i < angles.length; i++) {
+                const x = centerX + scores[i] * Math.cos(angles[i] - Math.PI/2);
+                const y = centerY + scores[i] * Math.sin(angles[i] - Math.PI/2);
+                
+                ctx.beginPath();
+                ctx.arc(x, y, 8, 0, 2 * Math.PI);
+                ctx.fillStyle = '#d4af37';
+                ctx.shadowColor = '#d4af37';
+                ctx.shadowBlur = 15;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+            
+            // 添加标签
+            const labels = ['情感继承', '未竟事件', '忠诚代价', '家族秘密', '脉轮印记'];
+            for (let i = 0; i < angles.length; i++) {
+                const x = centerX + (radius + 30) * Math.cos(angles[i] - Math.PI/2);
+                const y = centerY + (radius + 30) * Math.sin(angles[i] - Math.PI/2);
+                
+                ctx.font = '12px "PingFang SC"';
+                ctx.fillStyle = '#d4af37';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(labels[i], x, y);
+            }
+        }
+
+        // ==================== 工具函数 ====================
+        window.copyWechat = function() {
+            const wechatId = 'lfhy771';
+            
+            // 尝试使用现代clipboard API
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(wechatId).then(function() {
+                    alert('微信号已复制：' + wechatId + '\n\n请前往微信添加好友获取深度解读');
+                }).catch(function() {
+                    // 降级方案
+                    fallbackCopy();
+                });
+            } else {
+                // 降级方案
+                fallbackCopy();
+            }
+            
+            function fallbackCopy() {
+                const textarea = document.createElement('textarea');
+                textarea.value = wechatId;
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    alert('微信号已复制：' + wechatId + '\n\n请前往微信添加好友获取深度解读');
+                } catch (err) {
+                    prompt('复制微信号：', wechatId);
+                }
+                document.body.removeChild(textarea);
+            }
+        };
+
+        window.restartTest = function() {
+            localStorage.removeItem('ancestorKarmaResult');
+            showPage('start');
+        };
+
+        // 初始化背景粒子
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            if (!particlesContainer) return;
+            
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                const size = Math.random() * 100 + 50;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 10 + 's';
+                particle.style.opacity = Math.random() * 0.1 + 0.05;
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // 页面加载完成后初始化
+        window.addEventListener('load', function() {
+            createParticles();
+        });
+    </script>
+</body>
+</html>
